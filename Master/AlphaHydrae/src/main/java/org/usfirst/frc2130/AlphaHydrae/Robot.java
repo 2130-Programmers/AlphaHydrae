@@ -157,5 +157,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("CamMode", Robot.limelightSubsystem.returnCamMode());
         SmartDashboard.putNumber("Limelight Area", Robot.driveTrainSubsystem.returnLimelightArea());
         SmartDashboard.putBoolean("FootProx Value", Robot.climbingPIDSubsystem.atFootProx());
+        SmartDashboard.putNumber("RearEncoder", Robot.climbingPIDSubsystem.getEncoderPosition());
     }
 }

@@ -18,6 +18,8 @@ public class climbingPIDSubsystem extends PIDSubsystem {
     private double collectiveOutput;
     private boolean atClimbableLevel;
 
+    private int liftingModifierModifier = 4;
+
     // Initialize your subsystem here
     public climbingPIDSubsystem() {
         super("climbingPIDSubsystem", 0.05, 0.0, 0.0);
@@ -104,6 +106,14 @@ public class climbingPIDSubsystem extends PIDSubsystem {
         return Robot.elevatorPIDSubsystem.elevatorEncoderValue();
     }
 
+    public double footEndoderPosition() {
+        return rearLiftMotor.getSelectedSensorPosition(0);
+    }
+
+    public void zeroFootEndoderPosition() {
+        rearLiftMotor.setSelectedSensorPosition(0,0,0);
+    }
+
     public void resetFeet() {
         climbingFeetSolenoid.set(Value.kForward);
     }
@@ -153,7 +163,7 @@ public class climbingPIDSubsystem extends PIDSubsystem {
     }
 
     public int getEncoderPosition() {
-        return -rearFootMotor.getSelectedSensorPosition(0);
+        return rearFootMotor.getSelectedSensorPosition(0);
     }
 
     public void zeroEncoderPosition() {
@@ -162,7 +172,7 @@ public class climbingPIDSubsystem extends PIDSubsystem {
 
     public void liftRobot() {
 
-        Robot.elevatorPIDSubsystem.setMaxMinOutput(0.3, -0.35);
+        
 
         rearLiftMotor.configPeakOutputForward(1, 0);
         rearLiftMotor.configPeakOutputReverse(-1, 0);
@@ -170,33 +180,30 @@ public class climbingPIDSubsystem extends PIDSubsystem {
         rearFootMotor.configPeakOutputForward(1, 0);
         rearFootMotor.configPeakOutputReverse(-1, 0);
 
-        if (this.getEncoderPosition() < 27000 && this.getEncoderPosition() > 0) {
+        if (this.getEncoderPosition() < -27000) {
+            Robot.elevatorPIDSubsystem.setBrakeState(false);
+            Robot.elevatorPIDSubsystem.applyPower(0);
+            rearLiftMotor.set(0);
+            //Robot.clawSubsystem.raiseClaw();
+            rearFootMotor.set(-0.1);
+        } else {
             Robot.elevatorPIDSubsystem.setBrakeState(true);
+            Robot.elevatorPIDSubsystem.setMaxMinOutput(0.3, -0.35 + (liftingModifier() * liftingModifierModifier));
             Robot.elevatorPIDSubsystem.applyPower(-1);
             rearLiftMotor.set(-1);
             Robot.clawSubsystem.raiseClaw();
             rearFootMotor.set(-0.1);
-        } else {
-            Robot.elevatorPIDSubsystem.setBrakeState(false);
-            Robot.elevatorPIDSubsystem.applyPower(0);
-            rearLiftMotor.set(0);
-            Robot.clawSubsystem.raiseClaw();
-            rearFootMotor.set(-0.1);
         }
 
-        Robot.elevatorPIDSubsystem.setBrakeState(true);
-        Robot.elevatorPIDSubsystem.applyPower(-1);
-        rearLiftMotor.set(-1);
-        Robot.clawSubsystem.raiseClaw();
-        rearFootMotor.set(-0.1);
+
     }
 
     public void retractFoot() {
-        rearLiftMotor.set(1);
+        //rearLiftMotor.set(1);
     }
 
     public void moveRobot() {
-        rearFootMotor.set(1);
+        //rearFootMotor.set(1);
         Robot.driveTrainSubsystem.applyPower(0.2);
     }
 

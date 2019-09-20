@@ -43,7 +43,7 @@ public class LiftElevatorLevelThree extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.climbingPIDSubsystem.liftElevator(12500, 500);
+        Robot.climbingPIDSubsystem.liftElevator(20000, 500);
     }
 
     // Make this return true when this Command no longer needs to run execute()
